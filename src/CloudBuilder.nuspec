@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>CloudBuilder.Logger</id>
+    <version>0.1.0-pre</version>
+    <title>CloudBuilder: Logger</title>
+    <authors>kzu</authors>
+    <licenseUrl>https://github.com/kzu/CloudBuilder/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/kzu/CloudBuilder/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides an MSBuild logger that pushes messages to a SignalR hub where it can be viewed remotely in real time.</description>
+    <copyright>Copyright 2015</copyright>
+    <tags>msbuild signalr</tags>
+  </metadata>
+  <files>
+    <file src="CloudBuilder.Logger\bin\CloudBuilder.Logger.dll" target="tools" />
+    <file src="CloudBuilder.Logger\bin\CloudBuilder.Logger.pdb" target="tools" />
+    <file src="CloudBuilder.Logger\bin\Microsoft.AspNet.SignalR.Client.dll" target="tools" />
+    <file src="CloudBuilder.Logger\bin\Newtonsoft.Json.dll" target="tools" />
+  </files>
+</package>
