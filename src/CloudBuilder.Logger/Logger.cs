@@ -17,6 +17,7 @@ namespace CloudBuilder
 		IHubProxy proxy;
 		string hubUrl;
 		string buildId;
+		ManualResetEventSlim shutDown = new ManualResetEventSlim();
 
 		public Logger ()
 			: base (LoggerVerbosity.Detailed)
@@ -26,8 +27,23 @@ namespace CloudBuilder
 
 		public override void Shutdown ()
 		{
-			if (connection != null)
-				connection.Dispose ();
+			if (connection != null) {
+				try {
+					// Signal the hub that we're done, which will cause another message to come
+					// back telling us that all pending messages have been sent.
+					proxy.Invoke ("Shutdown", buildId)
+						.ContinueWith (t =>
+							Trace.WriteLine ("Failed to shutdown logger."),
+							CancellationToken.None,
+							TaskContinuationOptions.OnlyOnFaulted,
+							TaskScheduler.Default);
+
+					// Max of 5' to have the cloud catch-up.
+					shutDown.Wait (TimeSpan.FromMinutes (5));
+				} finally {
+					connection.Dispose ();
+				}
+			}
 		}
 
 		void OnWrite (string message)
@@ -56,6 +72,7 @@ namespace CloudBuilder
 				proxy = connection.CreateHubProxy ("build");
 				try {
 					connection.Start ().Wait (3000);
+					proxy.On ("Shutdown", () => shutDown.Set ());
 				} catch (Exception e) {
 					Trace.WriteLine ("Failed to connect to " + hubUrl + ": " + e.ToString ());
 					connection.Dispose ();
@@ -72,16 +89,6 @@ namespace CloudBuilder
 						TaskContinuationOptions.OnlyOnFaulted,
 						TaskScheduler.Default);
 			}
-		}
-
-		void OnAnyEvent (object sender, BuildEventArgs e)
-		{
-			proxy.Invoke ("Message", Parameters, e.Message)
-				.ContinueWith (t =>
-					Trace.WriteLine ("Failed to publish message."),
-					CancellationToken.None,
-					TaskContinuationOptions.OnlyOnFaulted,
-					TaskScheduler.Default);
 		}
 	}
 }

@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>CloudBuilder.Logger</id>
-    <version>0.1.0-pre</version>
+    <version>0.1.1-pre</version>
     <title>CloudBuilder: Logger</title>
     <authors>kzu</authors>
     <licenseUrl>https://github.com/kzu/CloudBuilder/blob/master/LICENSE</licenseUrl>

@@ -16,5 +16,13 @@ namespace CloudBuilder.Web
 		{
 			Clients.Group (buildId).Message (message);
 		}
+
+		/// <summary>
+		/// Signals the attached logger that the Shutdown message was received on the server.
+		/// </summary>
+		public void Shutdown (string buildId)
+		{
+			Clients.Group (buildId).Shutdown ();
+		}
 	}
 }
